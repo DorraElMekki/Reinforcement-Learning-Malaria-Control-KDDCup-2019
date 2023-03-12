@@ -92,8 +92,10 @@ class TargetSpace(object):
             assert set(params) == set(self.keys)
         except AssertionError:
             raise ValueError(
-                "Parameters' keys ({}) do ".format(sorted(params)) +
-                "not match the expected set of keys ({}).".format(self.keys)
+                (
+                    f"Parameters' keys ({sorted(params)}) do "
+                    + f"not match the expected set of keys ({self.keys})."
+                )
             )
         return np.asarray([params[key] for key in self.keys])
 
@@ -102,8 +104,10 @@ class TargetSpace(object):
             assert len(x) == len(self.keys)
         except AssertionError:
             raise ValueError(
-                "Size of array ({}) is different than the ".format(len(x)) +
-                "expected number of parameters ({}).".format(len(self.keys))
+                (
+                    f"Size of array ({len(x)}) is different than the "
+                    + f"expected number of parameters ({len(self.keys)})."
+                )
             )
         return dict(zip(self.keys, x))
 
@@ -118,8 +122,10 @@ class TargetSpace(object):
             assert x.size == self.dim
         except AssertionError:
             raise ValueError(
-                "Size of array ({}) is different than the ".format(len(x)) +
-                "expected number of parameters ({}).".format(len(self.keys))
+                (
+                    f"Size of array ({len(x)}) is different than the "
+                    + f"expected number of parameters ({len(self.keys)})."
+                )
             )
         return x
 
@@ -158,7 +164,7 @@ class TargetSpace(object):
         """
         x = self._as_array(params)
         if x in self:
-            raise KeyError('Data point {} is not unique'.format(x))
+            raise KeyError(f'Data point {x} is not unique')
 
         # Insert data into unique dictionary
         self._cache[_hashable(x.ravel())] = target

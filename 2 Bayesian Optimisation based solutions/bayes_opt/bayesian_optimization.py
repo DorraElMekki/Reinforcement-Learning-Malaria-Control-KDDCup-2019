@@ -45,13 +45,13 @@ class Observable(object):
     def __init__(self, events):
         # maps event names to subscribers
         # str -> dict
-        self._events = {event: dict() for event in events}
+        self._events = {event: {} for event in events}
 
     def get_subscribers(self, event):
         return self._events[event]
 
     def subscribe(self, event, subscriber, callback=None):
-        if callback == None:
+        if callback is None:
             callback = getattr(subscriber, 'update')
         self.get_subscribers(event)[subscriber] = callback
 
@@ -143,7 +143,7 @@ class BayesianOptimization(Observable):
             self._queue.add(self._space.random_sample())
 
     def _prime_subscriptions(self):
-        if not any([len(subs) for subs in self._events.values()]):
+        if not any(len(subs) for subs in self._events.values()):
             _logger = _get_default_logger(self._verbose)
             self.subscribe(Events.OPTMIZATION_START, _logger)
             self.subscribe(Events.OPTMIZATION_STEP, _logger)
