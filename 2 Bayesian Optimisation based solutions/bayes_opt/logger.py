@@ -45,7 +45,7 @@ class ScreenLogger(_Tracker):
             if "." in s:
                 return s[:self._default_cell_size]
             else:
-                return s[:self._default_cell_size - 3] + "..."
+                return f"{s[:self._default_cell_size - 3]}..."
         return s
 
     def _format_key(self, key):
@@ -54,28 +54,24 @@ class ScreenLogger(_Tracker):
             s=self._default_cell_size
         )
         if len(s) > self._default_cell_size:
-            return s[:self._default_cell_size - 3] + "..."
+            return f"{s[:self._default_cell_size - 3]}..."
         return s
 
     def _step(self, instance, colour=Colours.black):
         res = instance.res[-1]
-        cells = []
+        cells = [self._format_number(self._iterations + 1)]
 
-        cells.append(self._format_number(self._iterations + 1))
         cells.append(self._format_number(res["target"]))
 
-        for key in instance.space.keys:
-            cells.append(self._format_number(res["params"][key]))
-
+        cells.extend(
+            self._format_number(res["params"][key]) for key in instance.space.keys
+        )
         return "| " + " | ".join(map(colour, cells)) + " |"
 
     def _header(self, instance):
-        cells = []
-        cells.append(self._format_key("iter"))
+        cells = [self._format_key("iter")]
         cells.append(self._format_key("target"))
-        for key in instance.space.keys:
-            cells.append(self._format_key(key))
-
+        cells.extend(self._format_key(key) for key in instance.space.keys)
         line = "| " + " | ".join(cells) + " |"
         self._header_length = len(line)
         return line + "\n" + ("-" * self._header_length)
@@ -105,7 +101,7 @@ class ScreenLogger(_Tracker):
 
 class JSONLogger(_Tracker):
     def __init__(self, path):
-        self._path = path if path[-5:] == ".json" else path + ".json"
+        self._path = path if path[-5:] == ".json" else f"{path}.json"
         try:
             os.remove(self._path)
         except OSError:
